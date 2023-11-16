@@ -20,10 +20,14 @@ services:
     build:
       context: .
       dockerfile: ../../ganache/Dockerfile
+    container_name: ganache
     env_file:
       - ../../ganache/.env
     ports:
-      - "8545:8545"
+      - 127.0.0.1:8545:8545
+      - 127.0.0.1:8546:8546
+    expose:
+      - "8545"
 
   backend:
     depends_on:
@@ -37,7 +41,8 @@ services:
       - db:database
     environment:
       ETHEREUM_JSONRPC_VARIANT: "ganache"
-      ETHEREUM_JSONRPC_WS_URL: ws://host.docker.internal:8545/
+      ETHEREUM_JSONRPC_HTTP_URL: ganache:8545
+      ETHEREUM_JSONRPC_TRACE_URL: ganache:8545
       INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
       INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
       CHAIN_ID: "1337"
